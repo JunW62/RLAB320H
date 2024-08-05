@@ -2,7 +2,6 @@ import React, { useReducer } from "react";
 import TodoItems from "./TodoItems";
 import initialState from "../seedData";
 
-// Define the reducer for individual todo item operations
 function todoItemReducer(state, action) {
   switch (action.type) {
     case "add":
@@ -30,7 +29,6 @@ function todoItemReducer(state, action) {
   }
 }
 
-// Main reducer to manage the state of the todo list
 function reducer(state, action) {
   if (["add", "delete", "toggle", "save"].includes(action.type)) {
     return { ...state, items: todoItemReducer(state.items, action) };
