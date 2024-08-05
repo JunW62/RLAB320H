@@ -57,7 +57,7 @@ body {
   border: solid 3px transparent;
   border-bottom: dashed 3px #fdcb6e;
   font-family: "Architects Daughter", cursive;
-  font-size: 1rem;
+  font-size: 1.5rem;
   color: hsla(260, 2%, 25%, 0.7);
   width: 70%;
   margin-bottom: 20px;
@@ -81,10 +81,11 @@ button span {
   margin-right: 5px;
 }
 
-li {
-  text-align: left;
+p {
+  text-align: center;
   position: relative;
   padding: 0.5rem;
+  max-width: 350px;
 }
 
 footer {

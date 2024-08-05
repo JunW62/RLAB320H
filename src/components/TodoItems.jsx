@@ -1,28 +1,51 @@
-import React, { useState } from "react";
+import React, { useReducer } from "react";
+
+const initialState = {
+  isEditing: false,
+  editedItems: "",
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "startEdit":
+      return { ...state, isEditing: true, editedItems: action.payload };
+    case "editItem":
+      return { ...state, editedItems: action.payload };
+    case "saveItem":
+      return { ...state, isEditing: false };
+    case "cancelEdit":
+      return { ...state, isEditing: false, editedItems: "" };
+    default:
+      throw new Error();
+  }
+}
 
 const ListItem = ({ item, handleCheck, handleDelete, handleSave }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(item.title);
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    editedItems: item.title,
+  });
 
   const handleItemSave = () => {
-    handleSave(item.id, editedTitle);
-    setIsEditing(false);
+    handleSave(item.id, state.editedItems);
+    dispatch({ type: "saveItem" });
   };
 
   return (
     <div className="listItems">
       <input
-        className="checkbox"
         type="checkbox"
         checked={item.completed}
         onChange={() => handleCheck(item.id)}
       />
-      {isEditing ? (
+      {state.isEditing ? (
         <>
           <input
             type="text"
-            value={editedTitle}
-            onChange={(e) => setEditedTitle(e.target.value)}
+            value={state.editedItems}
+            onChange={(e) =>
+              dispatch({ type: "editItem", payload: e.target.value })
+            }
           />
           <button onClick={handleItemSave}>
             <span>Save</span>
@@ -36,7 +59,11 @@ const ListItem = ({ item, handleCheck, handleDelete, handleSave }) => {
             {item.title}
           </p>
           <div>
-            <button onClick={() => setIsEditing(true)}>
+            <button
+              onClick={() =>
+                dispatch({ type: "startEdit", payload: item.title })
+              }
+            >
               <span>Edit</span>
             </button>
             <button
@@ -53,17 +80,3 @@ const ListItem = ({ item, handleCheck, handleDelete, handleSave }) => {
 };
 
 export default ListItem;
-
-// function TodoItems(props) {
-//   return (
-//     <div
-//       onClick={() => {
-//         props.onChecked(props.id);
-//       }}
-//     >
-//       <li>{props.text}</li>
-//     </div>
-//   );
-// }
-
-// export default TodoItems;

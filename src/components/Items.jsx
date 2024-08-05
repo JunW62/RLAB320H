@@ -1,55 +1,89 @@
-import React, { useState, useReducer } from "react";
+import React, { useReducer } from "react";
 import TodoItems from "./TodoItems";
 import initialState from "../seedData";
-import todoItemReducer from "./TodoItemReducer";
+
+// Define the reducer for individual todo item operations
+function todoItemReducer(state, action) {
+  switch (action.type) {
+    case "add":
+      return [
+        {
+          id: Date.now(),
+          userId: 1,
+          title: action.payload.title,
+          completed: false,
+        },
+        ...state,
+      ];
+    case "delete":
+      return state.filter((item) => item.id !== action.id);
+    case "toggle":
+      return state.map((item) =>
+        item.id === action.id ? { ...item, completed: !item.completed } : item
+      );
+    case "save":
+      return state.map((item) =>
+        item.id === action.id ? { ...item, title: action.title } : item
+      );
+    default:
+      throw new Error("Unknown action type: " + action.type);
+  }
+}
+
+// Main reducer to manage the state of the todo list
+function reducer(state, action) {
+  if (["add", "delete", "toggle", "save"].includes(action.type)) {
+    return { ...state, items: todoItemReducer(state.items, action) };
+  }
+  switch (action.type) {
+    case "changeInput":
+      return { ...state, inputText: action.payload };
+    default:
+      return state;
+  }
+}
 
 function Items() {
-  const [inputText, setInputText] = useState("");
-  const [items, dispatch] = useReducer(todoItemReducer, initialState);
+  const [state, dispatch] = useReducer(reducer, {
+    items: initialState,
+    inputText: "",
+  });
 
   function handleChange(event) {
-    const newValue = event.target.value;
-    setInputText(newValue);
+    dispatch({ type: "changeInput", payload: event.target.value });
   }
 
   function addItem() {
-    dispatch({
-      type: "add",
-      payload: { userId: 1, title: inputText, completed: false },
-    });
-    setInputText("");
+    if (state.inputText.trim()) {
+      dispatch({ type: "add", payload: { title: state.inputText } });
+    }
   }
 
   return (
     <div className="container">
       <div className="heading">
-        <h1>To-Do List</h1>
+        <h1>Create To-Do List</h1>
       </div>
       <div className="form">
-        <input onChange={handleChange} type="text" value={inputText} />
-        <button onClick={addItem}>
-          <span>Add</span>
-        </button>
+        <input
+          onChange={handleChange}
+          type="text"
+          placeholder="Add Task"
+          value={state.inputText}
+        />
+        <button onClick={addItem}>Add</button>
       </div>
-      <div>
-        <ul>
-          {items.map((item) => (
-            <TodoItems
-              key={item.id}
-              item={item}
-              handleCheck={(id) =>
-                dispatch({ type: "toggle", payload: { id } })
-              }
-              handleDelete={(id) =>
-                dispatch({ type: "delete", payload: { id } })
-              }
-              handleSave={(id, title) =>
-                dispatch({ type: "edit", payload: { id, title } })
-              }
-            />
-          ))}
-        </ul>
-      </div>
+      <ul>
+        {state.items.map((item) => (
+          <TodoItems
+            key={item.id}
+            item={item}
+            handleCheck={(id) => dispatch({ type: "toggle", id })}
+            handleDelete={(id) => dispatch({ type: "delete", id })}
+            handleSave={(id, title) => dispatch({ type: "save", id, title })}
+          />
+        ))}
+      </ul>
     </div>
   );
 }
