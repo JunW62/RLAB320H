@@ -69,7 +69,9 @@ function Items() {
           placeholder="Add Task"
           value={state.inputText}
         />
-        <button onClick={addItem}>Add</button>
+        <button className="add-btn" onClick={addItem}>
+          Add
+        </button>
       </div>
       <ul>
         {state.items.map((item) => (

@@ -34,6 +34,7 @@ const ListItem = ({ item, handleCheck, handleDelete, handleSave }) => {
   return (
     <div className="listItems">
       <input
+        className="checkbox"
         type="checkbox"
         checked={item.completed}
         onChange={() => handleCheck(item.id)}
