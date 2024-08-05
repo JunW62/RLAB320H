@@ -16,7 +16,7 @@ body {
   width: 100%;
   height: auto;
   min-height: 500px;
-  max-width: 500px;
+  max-width: 700px;
   min-width: 250px;
   background: #f1f5f8;
   background-image: radial-gradient(#bfc0c1 7.2%, transparent 0);
@@ -26,6 +26,14 @@ body {
   padding: 1rem;
   box-sizing: border-box;
 }
+.listItems {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  gap: 20px;
+}
+
 .heading {
   display: flex;
   align-items: center;
@@ -70,10 +78,15 @@ button span {
   padding: 0.5rem 1rem;
   border-radius: 5px;
   border: 2px solid hsl(198, 1%, 29%);
+  margin-right: 5px;
 }
 
 li {
   text-align: left;
   position: relative;
   padding: 0.5rem;
+}
+
+footer {
+  margin-top: 1rem;
 }

@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useReducer } from "react";
 import TodoItems from "./TodoItems";
+import initialState from "../seedData";
+import todoItemReducer from "./TodoItemReducer";
 
 function Items() {
   const [inputText, setInputText] = useState("");
-  const [items, setItems] = useState([]);
+  const [items, dispatch] = useReducer(todoItemReducer, initialState);
 
   function handleChange(event) {
     const newValue = event.target.value;
@@ -11,18 +13,11 @@ function Items() {
   }
 
   function addItem() {
-    setItems((prevItems) => {
-      return [...prevItems, inputText];
+    dispatch({
+      type: "add",
+      payload: { userId: 1, title: inputText, completed: false },
     });
     setInputText("");
-  }
-
-  function deleteItem(id) {
-    setItems((prevItems) => {
-      return prevItems.filter((item, index) => {
-        return index !== id;
-      });
-    });
   }
 
   return (
@@ -38,12 +33,19 @@ function Items() {
       </div>
       <div>
         <ul>
-          {items.map((todoItem, index) => (
+          {items.map((item) => (
             <TodoItems
-              key={index}
-              id={index}
-              text={todoItem}
-              onChecked={deleteItem}
+              key={item.id}
+              item={item}
+              handleCheck={(id) =>
+                dispatch({ type: "toggle", payload: { id } })
+              }
+              handleDelete={(id) =>
+                dispatch({ type: "delete", payload: { id } })
+              }
+              handleSave={(id, title) =>
+                dispatch({ type: "edit", payload: { id, title } })
+              }
             />
           ))}
         </ul>
